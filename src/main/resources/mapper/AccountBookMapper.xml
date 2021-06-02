@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.csdn.ingo.entity.AccountBookMapper">
+    <resultMap id="BaseResultMap" type="com.hui.pojo.AccountBook">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="money_id" property="moneyId" jdbcType="VARCHAR"/>
+        <result column="money" property="money" jdbcType="DECIMAL"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="money_time" property="moneyTime" jdbcType="DATE"/>
+        <result column="money_type" property="moneyType" jdbcType="BIGINT"/>
+    </resultMap>
+<!--    <sql id="Base_Column_List">-->
+<!--        id, money_id, money, reason, money_time, money_type-->
+<!--    </sql>-->
+<!--    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from account_book-->
+<!--        where id = #{id,jdbcType=BIGINT}-->
+<!--    </select>-->
+<!--    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">-->
+<!--    delete from account_book-->
+<!--    where id = #{id,jdbcType=BIGINT}-->
+<!--  </delete>-->
+<!--    <insert id="insert" parameterType="com.hui.pojo.AccountBook">-->
+<!--    insert into account_book (id, money_id, money,-->
+<!--      reason, money_time, money_type-->
+<!--      )-->
+<!--    values (#{id,jdbcType=BIGINT}, #{moneyId,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL},-->
+<!--      #{reason,jdbcType=VARCHAR}, #{moneyTime,jdbcType=DATE}, #{moneyType,jdbcType=BIGINT}-->
+<!--      )-->
+<!--  </insert>-->
+<!--    <insert id="insertSelective" parameterType="com.hui.pojo.AccountBook">-->
+<!--        insert into account_book-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--            <if test="id != null">-->
+<!--                id,-->
+<!--            </if>-->
+<!--            <if test="moneyId != null">-->
+<!--                money_id,-->
+<!--            </if>-->
+<!--            <if test="money != null">-->
+<!--                money,-->
+<!--            </if>-->
+<!--            <if test="reason != null">-->
+<!--                reason,-->
+<!--            </if>-->
+<!--            <if test="moneyTime != null">-->
+<!--                money_time,-->
+<!--            </if>-->
+<!--            <if test="moneyType != null">-->
+<!--                money_type,-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--            <if test="id != null">-->
+<!--                #{id,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--            <if test="moneyId != null">-->
+<!--                #{moneyId,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="money != null">-->
+<!--                #{money,jdbcType=DECIMAL},-->
+<!--            </if>-->
+<!--            <if test="reason != null">-->
+<!--                #{reason,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="moneyTime != null">-->
+<!--                #{moneyTime,jdbcType=DATE},-->
+<!--            </if>-->
+<!--            <if test="moneyType != null">-->
+<!--                #{moneyType,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--        </trim>-->
+<!--    </insert>-->
+<!--    <update id="updateByPrimaryKeySelective" parameterType="com.hui.pojo.AccountBook">-->
+<!--        update account_book-->
+<!--        <set>-->
+<!--            <if test="moneyId != null">-->
+<!--                money_id = #{moneyId,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="money != null">-->
+<!--                money = #{money,jdbcType=DECIMAL},-->
+<!--            </if>-->
+<!--            <if test="reason != null">-->
+<!--                reason = #{reason,jdbcType=VARCHAR},-->
+<!--            </if>-->
+<!--            <if test="moneyTime != null">-->
+<!--                money_time = #{moneyTime,jdbcType=DATE},-->
+<!--            </if>-->
+<!--            <if test="moneyType != null">-->
+<!--                money_type = #{moneyType,jdbcType=BIGINT},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        where id = #{id,jdbcType=BIGINT}-->
+<!--    </update>-->
+<!--    <update id="updateByPrimaryKey" parameterType="com.hui.pojo.AccountBook">-->
+<!--    update account_book-->
+<!--    set money_id = #{moneyId,jdbcType=VARCHAR},-->
+<!--      money = #{money,jdbcType=DECIMAL},-->
+<!--      reason = #{reason,jdbcType=VARCHAR},-->
+<!--      money_time = #{moneyTime,jdbcType=DATE},-->
+<!--      money_type = #{moneyType,jdbcType=BIGINT}-->
+<!--    where id = #{id,jdbcType=BIGINT}-->
+<!--  </update>-->
+
+<!--    &lt;!&ndash;   stat &ndash;&gt;-->
+<!--  <select id="queryAccountBook" resultMap="BaseResultMap" parameterType="com.hui.pojo.AccountBook">-->
+<!--    select <include refid="Base_Column_List"/>  from account_book  where id = #{moneyId,jdbcType=VARCHAR} and money_time = #{moneyTime,jdbcType=DATE}-->
+<!--  </select>-->
+
+<!--    &lt;!&ndash;   end  &ndash;&gt;-->
+
+</mapper>
