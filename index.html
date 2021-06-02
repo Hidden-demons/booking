@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>主页</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="fontico/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="css/header.css" />
+		
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			
+			// mui.plusReady(function(){
+			// 	var type = plus.os.name;
+			// 	if(type == "iOS") {
+			// 		//背景色
+			// 		plus.navigator.setStatusBarBackground("#252734");
+			// 		//字体色,只有dark和light
+			// 		plus.navigator.setStatusBarStyle('light');
+			// 	} else {
+			// 		plus.navigator.setStatusBarBackground("#252734");
+			// 		plus.navigator.setStatusBarStyle('light');
+			// 	}
+			// }) 
+
+			mui.plusReady(function(e) {
+				plus.navigator.setStatusBarStyle("light");
+				plus.navigator.setStatusBarBackground("#C9394A");
+			});
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav title">
+			<div name="tabales">
+				<h1 class="mui-title title-color"><b>记账</b></h1>
+			</div>
+
+			<div class="mui-hidden" name="tabales">
+				<h1 class="mui-title title-color"><b>未知一</b></h1>
+			</div>
+
+			<div class="mui-hidden" name="tabales">
+				<h1 class="mui-title title-color"><b>未知二</b></h1>
+			</div>
+
+			<div class="mui-hidden" name="tabales">
+				<h1 class="mui-title title-color"><b>我的</b></h1>
+			</div>
+
+		</header>
+		
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" tabindex="0">
+				<span class="mui-icon iconfont icon-jizhang"></span>
+				<span class="mui-tab-label">记账</span>
+			</a>
+			<a class="mui-tab-item" tabindex="1">
+				<span class="mui-icon iconfont icon-weizhi"></span>
+				<span class="mui-tab-label">未知一</span>
+			</a>
+			<a class="mui-tab-item" tabindex="2">
+				<span class="mui-icon iconfont icon-weizhi"></span>
+				<span class="mui-tab-label">未知二</span>
+			</a>
+			<a class="mui-tab-item" tabindex="3">
+				<span class="mui-icon iconfont icon-wode"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<script type="text/javascript">
+			var mulArray = [{
+				pageId: "hui-tally",
+				pageUrl: "hui-tally.html"
+			}, {
+				pageId: "hui-unknown1",
+				pageUrl: "hui-unknown.html"
+			}, {
+				pageId: "hui-unknown2",
+				pageUrl: "hui-unknown.html"
+
+			}, {
+				pageId: "hui-mine",
+				pageUrl: "hui-mine.html"
+			}];
+
+			var huiStyle = {
+				top: "44px",
+				bottom: "50px"
+			};
+
+			mui.plusReady(function() {
+				var $tabales = document.getElementsByName('tabales')
+
+				//获取当前的webview
+				var indexWebview = plus.webview.currentWebview();
+
+				//向当前的主页webview追加子页的四张webview对象
+				for (var i = 0; i < mulArray.length; i++) {
+
+					var muCur = mulArray[i];
+					var mulPage = plus.webview.create(muCur.pageUrl, muCur.pageId, huiStyle);
+
+					// 隐藏
+					mulPage.hide();
+
+					// 追加每一个子页面到当前主页面
+					indexWebview.append(mulPage);
+				};
+				plus.webview.show(mulArray[0].pageId);
+
+				// 批量绑定tap事件， 展示不同的页面
+				mui(".mui-bar-tab").on("tap", "a", function() {
+					var tabindex = this.getAttribute("tabindex");
+
+					//显示点击的tab选项对应的页面
+					plus.webview.show(mulArray[tabindex].pageId, "fade-in", 200);
+
+					$tabales[tabindex].classList.remove('mui-hidden');
+
+					//隐藏不需要的页面
+					for (var i = 0; i < mulArray.length; i++) {
+						if (i != tabindex) {
+							$tabales[i].classList.add('mui-hidden');
+							plus.webview.hide(mulArray[i].pageId, "fade-out", 200)
+						}
+					};
+				});
+			});
+		</script>
+	</body>
+</html>

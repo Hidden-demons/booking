@@ -1,0 +1,22 @@
+/* .title{
+	background: #efeff4;
+}
+
+.title-color{
+	color: black;
+}
+
+.mui-bar-tab .mui-tab-item.mui-active{
+	color: #252734;
+} */
+.title {
+	background-color: #c9394a;
+}
+
+.title-color {
+	color: white;
+}
+
+.mui-bar-tab .mui-tab-item.mui-active {
+	color: #c9394a;
+}

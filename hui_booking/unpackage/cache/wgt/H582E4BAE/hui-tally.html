@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>记账</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="fontico/iconfont.css" />
+		<script src="js/mui.js"></script>
+		<script type="text/javascript" src="js/mui.picker.min.js" />
+		<script type="text/javascript">
+			mui.init({
+			  gestureConfig:{
+			   tap: true, //默认为true
+			   doubletap: true, //默认为false
+			   longtap: true, //默认为false
+			   swipe: true, //默认为true
+			   drag: true, //默认为true
+			   hold:false,//默认为false，不监听
+			   release:false//默认为false，不监听
+			  }
+			});
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav title" style="background: #aa385b;">
+			<h1 class="mui-pull-left">
+				<a id="link_date" href="javascript:;">
+					<span class="mui-icon iconfont icon-riqi" style="color: white;"></span>
+				</a>
+			</h1>
+			
+			<h1 class="mui-title title-color"style="color: white;" id="headDate">时间</h1>
+			
+			<h1 class="mui-pull-right">
+				<a id="openPopover" href="#popover">
+					<span class="mui-icon iconfont icon-shangpin" style="color: white;"></span>
+				</a>
+			</h1>
+		</header>
+
+		<div class="mui-content" id="tableDiv">
+		</div>
+		
+		<div class="mui-content" id="divCountId">
+		</div>
+			<div id="popover" class="mui-popover">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media" >
+						<div class="mui-media-body">
+							 <input type="text" class="mui-input-clear" id="reasonJz" placeholder="请输入使用原因">
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media" >
+						<div class="mui-numbox" data-numbox-step='10' data-numbox-min='0' style="width: 100%;">
+						  <button class="mui-btn mui-numbox-btn-minus" type="button"><b>-</b></button>
+						  <input class="mui-numbox-input" type="number" id="moneyJz"  oninput="value=value.replace(/[^\d]/g,'')" />
+						  <button class="mui-btn mui-numbox-btn-plus" type="button"><b>+</b></button>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						类型： 
+						<div class="mui-input-row mui-radio">
+							<label>支出</label>
+							<input name="moneyTypeJz" value="1" type="radio" checked >
+						</div>
+						<div class="mui-input-row mui-radio">
+							<label>收入</label>
+							<input name="moneyTypeJz" value="2" type="radio">
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media" style="padding: 20px 20px 20px 20px;margin: auto;">
+						<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="mui-btn mui-btn-primary" id="referJz">确认</button>
+					</li>
+				</ul>
+			</div>
+		
+		<script src="js/app.js"></script>
+		<script type="text/javascript" >
+			var user = app.getUserGlobalInfo();
+			
+			// document.getElementById("tableDiv").addEventListener("swipeleft",function(event){
+			// 	document.getElementById("tableLi").style.WebkitTransform = "translateX(" + -80 + "px)";
+			// });
+			
+			mui(document.body).on('tap', '#delectJz', function(e) {
+			    mui(this).button('loading');
+			    setTimeout(function() {
+			        mui(this).button('reset');
+			    }.bind(this), 2000);
+			});
+			
+			mui(document.body).on('tap', '#referJz', function(e) {
+			    mui(this).button('loading');
+			    setTimeout(function() {
+			        mui(this).button('reset');
+			    }.bind(this), 2000);
+				
+				var reasonJz = document.getElementById("reasonJz");
+				var moneyJz  = document.getElementById("moneyJz");
+				var radioJz  = document.getElementsByName("moneyTypeJz");
+				var radioJzValue = "";
+				var headDate = document.getElementById("headDate").innerHTML.substr(5).trim(); 
+				
+				for(var i=0;i<radioJz.length;i++){
+					if(radioJz[i].checked==true){
+						radioJzValue = radioJz[i].value;
+					};
+				};
+				if(reasonJz.value.trim() != "" && moneyJz.value > 0){
+					mui.ajax(app.serverUrl + "/ab/insertAccountBook",{
+						data:{
+							moneyId:user.id,
+							reason:reasonJz.value,
+							money:parseInt(moneyJz.value),
+							moneyType:parseInt(radioJzValue),
+							moneyTime:timestampToTime(headDate)
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/json'},	              
+						success:function(data){
+							if(data.status == 200){
+								reasonJz.value = "";
+								moneyJz.value = "";
+								
+								mui('#popover').popover('hide');	
+								queryAccountBook(timestampToTime(headDate));
+							}else{
+								alert(data);
+							}
+						}
+					});
+				}else{
+					alert("请核查填写的资料是否是空，如果为空则无法添加，请知悉...");
+				}
+			});
+			
+			var dtpicker = new mui.DtPicker({
+			    type: "date",//设置日历初始视图模式 
+			    beginDate: new Date(2000, 1, 1),//设置开始日期 
+			    endDate: new Date(2099, 12, 31),//设置结束日期 
+			    labels: ['年', '月', '日']//设置默认标签区域提示语 
+			}); 
+			
+			function timestampToTime(cjsj) {
+			    var date = new Date(cjsj)
+			    var Y = date.getFullYear() + '-'
+			    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-'
+			    var D = date.getDate() + ' '
+			    return Y+M+D;
+			};
+			
+			function queryAccountBook(dateQab){
+				var typeM = "-";
+				var tableDiv = document.getElementById("tableDiv");
+				var divCountId = document.getElementById("divCountId");
+				
+				mui.ajax(app.serverUrl + "/ab/queryAccountBook",{
+					data:{
+						moneyId:user.id,
+						moneyTime:dateQab
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/json'},	              
+					success:function(data){
+						tableDiv.innerHTML = "";
+						divCountId.innerHTML = "";
+						
+						if (data.status == 200) {
+							var accountBook = data.data;
+							
+							if(accountBook != null){
+								var moneyZ = 0;
+								var moneyS = 0;
+								
+								mui.each(accountBook,function(index,item){
+									var ul = document.createElement("ul");
+									if(item.moneyType == "2"){
+										typeM = "+"
+										moneyS = moneyS + item.money;
+									}else{
+										typeM = "-"
+										moneyZ = moneyZ + item.money; 
+									}
+									
+									ul.className = "mui-table-view";
+									
+									ul.innerHTML = "<li id = 'tableLi' class='mui-table-view-cell mui-media'><span class='mui-pull-right' style='line-height: 42px;margin-left: 3px;'><b>"+
+										typeM+" "+item.money+"</b></span><div class='mui-media-body' style='line-height: 42px;font-size: 16px;'>"+
+										item.reason+"</div><div id='delectJz' data-loading-icon='mui-spinner mui-spinner-custom' class='mui-btn mui-btn-primary' style ='height: 90%;width: 80px;text-align: center;line-height:42px;right: -80px;'>删除</div></li>"
+									ul.style = "overflow:hidden";
+									tableDiv.appendChild(ul);
+									
+									divCountId.innerHTML = "<ul class='mui-table-view'><li class='mui-table-view-cell mui-media'><div class='mui-pull-loading' style='text-align: center;'> 今天总支出 : "+
+									moneyZ+" / 今天总收入 : "+ moneyS
+									+"</div></li></ul>";
+									
+								});
+							}else{
+								divCountId.innerHTML = "<ul class='mui-table-view'><li class='mui-table-view-cell mui-media'><div class='mui-pull-loading' style='text-align: center;'>今天并没有记账哦</div></li></ul>";
+							
+								// divCountId.innerHTM = "<ul class='mui-table-view'><li class='mui-table-view-cell mui-media'><img src='image/jnm.gif'></li></ul>";
+								// var myImage = document.createElement("img");
+								// myImage.src = 'image/jnm.gif';
+								// myImage.style = 'margin: auto;';
+								// divCountId.appendChild(myImage);
+							}
+						}else{
+							//当返回状态不是200时
+							alert(data);
+						}
+					}
+				});
+			};
+				
+			mui.plusReady(function(e) {
+				var date = new Date();
+				var headDate = document.getElementById("headDate");
+				
+				headDate.innerHTML = "当前日期:"+timestampToTime(date);
+				
+				queryAccountBook(timestampToTime(date));
+				
+				// 监听点击事件
+				document.getElementById("link_date").addEventListener("tap", function() {
+					dtpicker.show(function(ep) {
+						headDate.innerHTML = "当前日期:"+ep;
+						
+						queryAccountBook(timestampToTime(ep));
+						
+					}) 
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			/*
+			 * 描述：html5苹果手机向左滑动删除特效
+			 */
+			window.addEventListener('load', function() {
+			 var initX; //触摸位置
+			 var moveX; //滑动时的位置
+			 var X = 0; //移动距离
+			 var objX = 0; //目标对象位置
+			 window.addEventListener('touchstart', function(event) {
+			  event.preventDefault();
+			  var obj = event.target.parentNode;
+			  if (obj.id == "tableLi") {
+			   initX = event.targetTouches[0].pageX;
+			   objX = (obj.style.WebkitTransform.replace(/translateX\(/g, "").replace(/px\)/g, "")) * 1;
+			  }
+			  if (objX == 0) {
+			   window.addEventListener('touchmove', function(event) {
+			    event.preventDefault();
+			    var obj = event.target.parentNode;
+			    if (obj.id == "tableLi") {
+			     moveX = event.targetTouches[0].pageX;
+			     X = moveX - initX;
+			     if (X >= 0) {
+			      obj.style.WebkitTransform = "translateX(" + 0 + "px)";
+			     } else if (X < 0) {
+			      var l = Math.abs(X);
+			      obj.style.WebkitTransform = "translateX(" + -l + "px)";
+			      if (l > 80) {
+			       l = 80;
+			       obj.style.WebkitTransform = "translateX(" + -l + "px)";
+			      }
+			     }
+			    }
+			   });
+			  } else if (objX < 0) {
+			   window.addEventListener('touchmove', function(event) {
+			    event.preventDefault();
+			    var obj = event.target.parentNode;
+			    if (obj.id == "tableLi") {
+			     moveX = event.targetTouches[0].pageX;
+			     X = moveX - initX;
+			     if (X >= 0) {
+			      var r = -80 + Math.abs(X);
+			      obj.style.WebkitTransform = "translateX(" + r + "px)";
+			      if (r > 0) {
+			       r = 0;
+			       obj.style.WebkitTransform = "translateX(" + r + "px)";
+			      }
+			     } else { //向左滑动
+			      obj.style.WebkitTransform = "translateX(" + -80 + "px)";
+			     }
+			    }
+			   });
+			  }
+			 })
+			 window.addEventListener('touchend', function(event) {
+			  event.preventDefault();
+			  var obj = event.target.parentNode;
+			  if (obj.i == "tableLi") {
+			   objX = (obj.style.WebkitTransform.replace(/translateX\(/g, "").replace(/px\)/g, "")) * 1;
+			   if (objX > -40) {
+			    obj.style.WebkitTransform = "translateX(" + 0 + "px)";
+			    objX = 0;
+			   } else {
+			    obj.style.WebkitTransform = "translateX(" + -80 + "px)";
+			    objX = -80;
+			   }
+			  }
+			 })
+			})
+		</script>
+	</body>
+</html>
