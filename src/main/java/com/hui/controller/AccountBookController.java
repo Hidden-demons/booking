@@ -47,4 +47,15 @@ public class AccountBookController {
         }
         return IMoocJSONResult.ok();
     }
+    @PostMapping("/delAccountBook")
+    public IMoocJSONResult delAccountBook(@RequestBody AccountBook accountBook){
+
+        log.info("stat delAccountBook=====" + JSON.toJSONString(accountBook));
+        Integer integer = accountBookService.delAccountBook(accountBook);
+        log.info("end delAccountBook=====" + integer);
+        if (integer <= 0 ){
+            return  IMoocJSONResult.errorMsg("删除失败...请核查数据库...");
+        }
+        return IMoocJSONResult.ok();
+    }
 }

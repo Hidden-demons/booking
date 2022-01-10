@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @author 辉
+ */
 public class  AccountBook implements Serializable {
     private Long id;
 

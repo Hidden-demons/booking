@@ -24,4 +24,9 @@ public class AccountBookImpl implements AccountBookService {
         return bookMapper.insert(record);
     }
 
+    @Override
+    public Integer delAccountBook(AccountBook record) {
+        return bookMapper.delete(record);
+    }
+
 }
